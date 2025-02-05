@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hidden youtube video generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea, input, button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #output {
+            margin-top: 20px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hidden YouTube Generator</h1>
+    <p>Enter a YouTube URL below, and this tool will automatically convert it to an embed URL and open it in a new blank page.</p>
+
+    <input type="text" id="url" placeholder="Enter YouTube URL here" />
+    <button onclick="generateAndOpenPage()">Generate and Open</button>
+
+    <h2>Generated Data URL</h2>
+    <textarea id="output" rows="6" readonly></textarea>
+
+    <script>
+        function convertToEmbedUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                if (urlObj.hostname.includes('youtube.com')) {
+                    const videoId = urlObj.searchParams.get('v');
+                    return `https://www.youtube.com/embed/${videoId}`;
+                } else if (urlObj.hostname.includes('youtu.be')) {
+                    const videoId = urlObj.pathname.slice(1);
+                    return `https://www.youtube.com/embed/${videoId}`;
+                }
+                return url; // Return the original URL if it's already an embed URL
+            } catch {
+                return url; // Return the original URL if parsing fails
+            }
+        }
+
+        function generateAndOpenPage() {
+            const inputUrl = document.getElementById('url').value.trim();
+            if (!inputUrl) {
+                alert('Please enter a valid URL.');
+                return;
+            }
+
+            const embedUrl = convertToEmbedUrl(inputUrl);
+
+            try {
+                const iframeHtml = `<iframe src="${embedUrl}" width="100%" height="100%" style="position:absolute;top:0;left:0;" frameborder="0" allowfullscreen></iframe>`;
+                const base64Url = `data:text/html;base64,${btoa(iframeHtml)}`;
+
+                document.getElementById('output').value = base64Url;
+
+                // Open in a new blank page
+                const newWindow = window.open('about:blank', '_blank');
+                newWindow.document.write(atob(base64Url.split(',')[1]));
+                newWindow.document.close();
+            } catch (error) {
+                alert('An error occurred while generating the Base64 URL. Please check the input and try again.');
+                console.error('Error:', error);
+            }
+        }
+
+        // Optional: Add Enter key functionality for generating and opening the page
+        document.getElementById('url').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateAndOpenPage();
+            }
+        });
+    </script>
+</body>
+</html>
