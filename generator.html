@@ -20,17 +20,24 @@
             word-wrap: break-word;
             white-space: pre-wrap;
         }
+        iframe {
+            margin-top: 20px;
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <h1>Hidden xVideos Generator</h1>
-    <p>Enter an xVideos URL below, and this tool will automatically convert it to an embed URL and open it in a new blank page.</p>
+    <p>Enter an xVideos URL below, and this tool will automatically convert it to an embed URL and display the iframe. It will also open GitHub 30 seconds after clicking the button.</p>
 
     <input type="text" id="url" placeholder="Enter xVideos URL here" />
-    <button onclick="generateAndOpenPage()">Generate and Open</button>
+    <button onclick="generateAndOpenPage()">Generate and Display</button>
 
-    <h2>Generated Data URL</h2>
+    <h2>Generated Embed Iframe</h2>
     <textarea id="output" rows="6" readonly></textarea>
+    <iframe id="iframe" style="display: none;"></iframe>
 
     <script>
         function convertToEmbedUrl(url) {
@@ -57,16 +64,18 @@
 
             try {
                 const iframeHtml = `<iframe src="${embedUrl}" width="100%" height="100%" style="position:absolute;top:0;left:0;" frameborder="0" allowfullscreen></iframe>`;
-                const base64Url = `data:text/html;base64,${btoa(iframeHtml)}`;
+                document.getElementById('output').value = iframeHtml;
 
-                document.getElementById('output').value = base64Url;
+                const iframe = document.getElementById('iframe');
+                iframe.src = embedUrl;
+                iframe.style.display = 'block';
 
-                // Open in a new blank page
-                const newWindow = window.open('about:blank', '_blank');
-                newWindow.document.write(atob(base64Url.split(',')[1]));
-                newWindow.document.close();
+                // Open GitHub in a new tab after 30 seconds
+                setTimeout(() => {
+                    window.open('https://github.com', '_blank');
+                }, 30000);
             } catch (error) {
-                alert('An error occurred while generating the Base64 URL. Please check the input and try again.');
+                alert('An error occurred while generating the iframe. Please check the input and try again.');
                 console.error('Error:', error);
             }
         }
