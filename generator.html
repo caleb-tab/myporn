@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hidden youtube video generator</title>
+    <title>Hidden xVideos Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,10 +23,10 @@
     </style>
 </head>
 <body>
-    <h1>Hidden YouTube Generator</h1>
-    <p>Enter a YouTube URL below, and this tool will automatically convert it to an embed URL and open it in a new blank page.</p>
+    <h1>Hidden xVideos Generator</h1>
+    <p>Enter an xVideos URL below, and this tool will automatically convert it to an embed URL and open it in a new blank page.</p>
 
-    <input type="text" id="url" placeholder="Enter YouTube URL here" />
+    <input type="text" id="url" placeholder="Enter xVideos URL here" />
     <button onclick="generateAndOpenPage()">Generate and Open</button>
 
     <h2>Generated Data URL</h2>
@@ -36,12 +36,9 @@
         function convertToEmbedUrl(url) {
             try {
                 const urlObj = new URL(url);
-                if (urlObj.hostname.includes('youtube.com')) {
-                    const videoId = urlObj.searchParams.get('v');
-                    return `https://www.youtube.com/embed/${videoId}`;
-                } else if (urlObj.hostname.includes('youtu.be')) {
-                    const videoId = urlObj.pathname.slice(1);
-                    return `https://www.youtube.com/embed/${videoId}`;
+                if (urlObj.hostname.includes('xvideos.com')) {
+                    const videoId = urlObj.pathname.split('/').pop();
+                    return `https://www.xvideos.com/embedframe/${videoId}`;
                 }
                 return url; // Return the original URL if it's already an embed URL
             } catch {
@@ -73,13 +70,6 @@
                 console.error('Error:', error);
             }
         }
-
-        // Optional: Add Enter key functionality for generating and opening the page
-        document.getElementById('url').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                generateAndOpenPage();
-            }
-        });
     </script>
 </body>
 </html>
