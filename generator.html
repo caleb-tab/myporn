@@ -3,79 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidden xVideos Generator</title>
+    <title>Link Opener</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        textarea, input, button {
+        input, button {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
         }
-        #output {
-            margin-top: 20px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-        iframe {
-            margin-top: 20px;
-            width: 100%;
-            height: 500px;
-            border: none;
-        }
     </style>
 </head>
 <body>
-    <h1>Hidden xVideos Generator</h1>
-    <p>Enter an xVideos URL below, and this tool will automatically convert it to an embed URL and display the iframe. It will also open GitHub 30 seconds after clicking the button.</p>
+    <h1>Link Opener</h1>
+    <p>Enter a URL below, and this tool will open it in a new tab.</p>
 
-    <input type="text" id="url" placeholder="Enter xVideos URL here" />
-    <button onclick="generateAndOpenPage()">Generate and Display</button>
-
-    <h2>Generated Embed Iframe</h2>
-    <textarea id="output" rows="6" readonly></textarea>
-    <iframe id="iframe" style="display: none;"></iframe>
+    <input type="text" id="url" placeholder="Enter URL here" />
+    <button onclick="openPage()">Open Link</button>
 
     <script>
-        function convertToEmbedUrl(url) {
-            try {
-                const urlObj = new URL(url);
-                if (urlObj.hostname.includes('xvideos.com')) {
-                    const videoId = urlObj.pathname.split('/').pop();
-                    return `https://www.xvideos.com/embedframe/${videoId}`;
-                }
-                return url; // Return the original URL if it's already an embed URL
-            } catch {
-                return url; // Return the original URL if parsing fails
-            }
-        }
-
-        function generateAndOpenPage() {
+        function openPage() {
             const inputUrl = document.getElementById('url').value.trim();
             if (!inputUrl) {
                 alert('Please enter a valid URL.');
                 return;
             }
 
-            const embedUrl = convertToEmbedUrl(inputUrl);
-
             try {
-                const iframeHtml = `<iframe src="${embedUrl}" width="510" height="400" style="position:absolute;top:0;left:0;" frameborder="0" allowfullscreen></iframe>`;
-                document.getElementById('output').value = iframeHtml;
-
-                const iframe = document.getElementById('iframe');
-                iframe.src = embedUrl;
-                iframe.style.display = 'block';
-
-                // Open GitHub in a new tab after 30 seconds
-                setTimeout(() => {
-                    window.open('https://github.com', '_blank');
-                }, 30000);
+                const urlObj = new URL(inputUrl);
+                window.open(urlObj.href, '_blank');
             } catch (error) {
-                alert('An error occurred while generating the iframe. Please check the input and try again.');
+                alert('Please enter a valid URL.');
                 console.error('Error:', error);
             }
         }
