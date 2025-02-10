@@ -19,7 +19,7 @@
 </head>
 <body>
     <h1>Link Opener</h1>
-    <p>Enter a URL below, and this tool will open it in a new tab.</p>
+    <p>Enter a URL below, and this tool will open it in the current tab.</p>
 
     <input type="text" id="url" placeholder="Enter URL here" />
     <button onclick="openPage()">Open Link</button>
@@ -34,7 +34,7 @@
 
             try {
                 const urlObj = new URL(inputUrl);
-                window.open(urlObj.href, '_blank');
+                window.location.href = urlObj.href;
             } catch (error) {
                 alert('Please enter a valid URL.');
                 console.error('Error:', error);
