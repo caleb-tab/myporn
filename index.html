@@ -207,13 +207,17 @@
             const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
             const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
 
-            allIframes.forEach(frame => frame.style.display = 'none');
+            allIframes.forEach(frame => {
+                frame.style.display = 'none';
+                frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            });
             allPlayButtons.forEach(btn => btn.style.display = 'flex');
             allPauseButtons.forEach(btn => btn.style.display = 'none');
 
             iframe.style.display = 'block';
             button.style.display = 'none';
             pauseButton.style.display = 'flex';
+            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         }
 
         function pauseVideo(button) {
@@ -224,6 +228,7 @@
             iframe.style.display = 'none';
             button.style.display = 'none';
             playButton.style.display = 'flex';
+            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
         }
     </script>
 </body>
