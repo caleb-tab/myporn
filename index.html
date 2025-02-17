@@ -85,6 +85,36 @@
             cursor: pointer;
             z-index: 10;
         }
+        .fullscreen-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .fullscreen-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .fullscreen-container iframe {
+            width: 45%;
+            height: 45%;
+            margin: 2%;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +125,8 @@
             <input type="checkbox" id="multiPlaySetting"> Allow multiple videos to play (muted)
         </label>
     </div>
+    <button class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</button>
+    <div class="fullscreen-container" id="fullscreenContainer"></div>
     <div class="grid-container">
         <div class="iframe-container">
             <iframe src="https://www.xvideos.com/embedframe/otipheb803c" allowfullscreen></iframe>
@@ -246,8 +278,9 @@
             <div class="play-button" onclick="playVideo(this)">Play</div>
             <div class="pause-button" onclick="pauseVideo(this)">Pause</div>
             <div class="theater-button" onclick="toggleTheaterMode(this)">Theater</div>
+        </div>
         <div class="iframe-container">
-            <iframe width='640' height='360' src='https://www.peekvids.com/embed?v=STac4NYQQPN' allowfullscreen></iframe>
+            <iframe width="640" height="360" src="https://www.peekvids.com/embed?v=STac4NYQQPN" allowfullscreen></iframe>
             <div class="play-button" onclick="playVideo(this)">Play</div>
             <div class="pause-button" onclick="pauseVideo(this)">Pause</div>
             <div class="theater-button" onclick="toggleTheaterMode(this)">Theater</div>
@@ -259,19 +292,20 @@
     </div>
     <h1>Bye</h1>
     <p>More porn coming soon.</p>
- <script>
-    let isTheaterMode = false;
+    <script>
+        let isTheaterMode = false;
+        let isFullscreen = false;
 
-    function playVideo(button) {
-        const container = button.parentElement;
-        const iframe = container.querySelector('iframe');
-        const pauseButton = container.querySelector('.pause-button');
-        const allIframes = document.querySelectorAll('.iframe-container iframe');
-        const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
-        const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
-        const multiPlaySetting = document.getElementById('multiPlaySetting').checked;
+        function playVideo(button) {
+            const container = button.parentElement;
+            const iframe = container.querySelector('iframe');
+            const pauseButton = container.querySelector('.pause-button');
+            const allIframes = document.querySelectorAll('.iframe-container iframe');
+            const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
+            const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
+            const multiPlaySetting = document.getElementById('multiPlaySetting').checked;
 
-        if (!multiPlaySetting) {
+            if (!multiPlaySetting) {
             allIframes.forEach(frame => {
                 frame.style.display = 'none';
                 frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
@@ -289,6 +323,12 @@
             iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
         } else {
             iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+        }
+
+        if (multiPlaySetting) {
+            const fullscreenContainer = document.getElementById('fullscreenContainer');
+            fullscreenContainer.appendChild(iframe.cloneNode(true));
+            iframe.style.display = 'block';
         }
     }
 
@@ -326,6 +366,30 @@
             iframe.style.width = '100%';
             button.textContent = 'Normal';
             isTheaterMode = true;
+        }
+    }
+
+    function toggleFullscreen() {
+        const fullscreenContainer = document.getElementById('fullscreenContainer');
+        const allIframes = document.querySelectorAll('.iframe-container iframe');
+
+        if (isFullscreen) {
+            fullscreenContainer.style.display = 'none';
+            allIframes.forEach(frame => {
+                frame.style.width = '100%';
+                frame.style.height = '100%';
+            });
+            isFullscreen = false;
+        } else {
+            fullscreenContainer.style.display = 'flex';
+            allIframes.forEach(frame => {
+                const clone = frame.cloneNode(true);
+                clone.style.width = '45%';
+                clone.style.height = '45%';
+                clone.style.margin = '2%';
+                fullscreenContainer.appendChild(clone);
+            });
+            isFullscreen = true;
         }
     }
 
