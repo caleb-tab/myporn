@@ -255,66 +255,102 @@
     </div>
     <h1>Bye</h1>
     <p>More porn coming soon.</p>
-    <script>
-        let isTheaterMode = false;
+ <script>
+    let isTheaterMode = false;
 
-        function playVideo(button) {
-            const container = button.parentElement;
-            const iframe = container.querySelector('iframe');
-            const pauseButton = container.querySelector('.pause-button');
-            const allIframes = document.querySelectorAll('.iframe-container iframe');
-            const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
-            const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
+    function playVideo(button) {
+        const container = button.parentElement;
+        const iframe = container.querySelector('iframe');
+        const pauseButton = container.querySelector('.pause-button');
+        const allIframes = document.querySelectorAll('.iframe-container iframe');
+        const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
+        const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
+        const multiPlaySetting = document.getElementById('multiPlaySetting').checked;
 
+        if (!multiPlaySetting) {
             allIframes.forEach(frame => {
                 frame.style.display = 'none';
                 frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
             });
             allPlayButtons.forEach(btn => btn.style.display = 'flex');
             allPauseButtons.forEach(btn => btn.style.display = 'none');
-
-            iframe.style.display = 'block';
-            button.style.display = 'none';
-            pauseButton.style.display = 'flex';
-            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         }
 
-        function pauseVideo(button) {
-            const container = button.parentElement;
-            const iframe = container.querySelector('iframe');
-            const playButton = container.querySelector('.play-button');
+        iframe.style.display = 'block';
+        button.style.display = 'none';
+        pauseButton.style.display = 'flex';
+        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
 
-            iframe.style.display = 'none';
-            button.style.display = 'none';
-            playButton.style.display = 'flex';
-            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        if (multiPlaySetting) {
+            iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+        } else {
+            iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
         }
+    }
 
-        function toggleTheaterMode(button) {
-            const container = button.parentElement;
-            const iframe = container.querySelector('iframe');
-            const allContainers = document.querySelectorAll('.iframe-container');
+    function pauseVideo(button) {
+        const container = button.parentElement;
+        const iframe = container.querySelector('iframe');
+        const playButton = container.querySelector('.play-button');
 
-            if (isTheaterMode) {
-                allContainers.forEach(cont => {
-                    cont.style.width = '510px';
-                    cont.style.height = '400px';
-                });
-                button.textContent = 'Theater';
-                isTheaterMode = false;
-            } else {
-                allContainers.forEach(cont => {
-                    cont.style.width = '510px';
-                    cont.style.height = '400px';
-                });
-                container.style.width = '75vw';
-                container.style.height = '75vh';
-                iframe.style.height = '100%';
-                iframe.style.width = '100%';
-                button.textContent = 'Normal';
-                isTheaterMode = true;
+        iframe.style.display = 'none';
+        button.style.display = 'none';
+        playButton.style.display = 'flex';
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+    }
+
+    function toggleTheaterMode(button) {
+        const container = button.parentElement;
+        const iframe = container.querySelector('iframe');
+        const allContainers = document.querySelectorAll('.iframe-container');
+
+        if (isTheaterMode) {
+            allContainers.forEach(cont => {
+                cont.style.width = '510px';
+                cont.style.height = '400px';
+            });
+            button.textContent = 'Theater';
+            isTheaterMode = false;
+        } else {
+            allContainers.forEach(cont => {
+                cont.style.width = '510px';
+                cont.style.height = '400px';
+            });
+            container.style.width = '75vw';
+            container.style.height = '75vh';
+            iframe.style.height = '100%';
+            iframe.style.width = '100%';
+            button.textContent = 'Normal';
+            isTheaterMode = true;
+        }
+    }
+
+    document.getElementById('multiPlaySetting').addEventListener('change', function() {
+        if (!this.checked) {
+            const allIframes = document.querySelectorAll('.iframe-container iframe');
+            let minTimeLeftFrame = null;
+            let minTimeLeft = Infinity;
+
+            allIframes.forEach(frame => {
+                const currentTime = frame.contentWindow.document.querySelector('video').currentTime;
+                const duration = frame.contentWindow.document.querySelector('video').duration;
+                const timeLeft = duration - currentTime;
+
+                if (timeLeft < minTimeLeft) {
+                    minTimeLeft = timeLeft;
+                    minTimeLeftFrame = frame;
+                }
+
+                frame.style.display = 'none';
+                frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            });
+
+            if (minTimeLeftFrame) {
+                minTimeLeftFrame.style.display = 'block';
+                minTimeLeftFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
             }
         }
-    </script>
+    });
+</script>
 </body>
 </html>
