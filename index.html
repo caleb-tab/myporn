@@ -292,20 +292,20 @@
     </div>
     <h1>Bye</h1>
     <p>More porn coming soon.</p>
-    <script>
-        let isTheaterMode = false;
-        let isFullscreen = false;
+  <script>
+    let isTheaterMode = false;
+    let isFullscreen = false;
 
-        function playVideo(button) {
-            const container = button.parentElement;
-            const iframe = container.querySelector('iframe');
-            const pauseButton = container.querySelector('.pause-button');
-            const allIframes = document.querySelectorAll('.iframe-container iframe');
-            const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
-            const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
-            const multiPlaySetting = document.getElementById('multiPlaySetting').checked;
+    function playVideo(button) {
+        const container = button.parentElement;
+        const iframe = container.querySelector('iframe');
+        const pauseButton = container.querySelector('.pause-button');
+        const allIframes = document.querySelectorAll('.iframe-container iframe');
+        const allPlayButtons = document.querySelectorAll('.iframe-container .play-button');
+        const allPauseButtons = document.querySelectorAll('.iframe-container .pause-button');
+        const multiPlaySetting = document.getElementById('multiPlaySetting').checked;
 
-            if (!multiPlaySetting) {
+        if (!multiPlaySetting) {
             allIframes.forEach(frame => {
                 frame.style.display = 'none';
                 frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
@@ -323,12 +323,6 @@
             iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
         } else {
             iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-        }
-
-        if (multiPlaySetting) {
-            const fullscreenContainer = document.getElementById('fullscreenContainer');
-            fullscreenContainer.appendChild(iframe.cloneNode(true));
-            iframe.style.display = 'block';
         }
     }
 
@@ -375,10 +369,7 @@
 
         if (isFullscreen) {
             fullscreenContainer.style.display = 'none';
-            allIframes.forEach(frame => {
-                frame.style.width = '100%';
-                frame.style.height = '100%';
-            });
+            fullscreenContainer.innerHTML = '';
             isFullscreen = false;
         } else {
             fullscreenContainer.style.display = 'flex';
