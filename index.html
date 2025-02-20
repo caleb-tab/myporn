@@ -298,7 +298,7 @@
     </div>
     <h1>Bye</h1>
     <p>More porn coming soon.</p>
-  <script>
+ <script>
     let isTheaterMode = false;
     let isFullscreen = false;
 
@@ -389,33 +389,6 @@
             isFullscreen = true;
         }
     }
-
-    document.getElementById('multiPlaySetting').addEventListener('change', function() {
-        if (!this.checked) {
-            const allIframes = document.querySelectorAll('.iframe-container iframe');
-            let minTimeLeftFrame = null;
-            let minTimeLeft = Infinity;
-
-            allIframes.forEach(frame => {
-                const currentTime = frame.contentWindow.document.querySelector('video').currentTime;
-                const duration = frame.contentWindow.document.querySelector('video').duration;
-                const timeLeft = duration - currentTime;
-
-                if (timeLeft < minTimeLeft) {
-                    minTimeLeft = timeLeft;
-                    minTimeLeftFrame = frame;
-                }
-
-                frame.style.display = 'none';
-                frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            });
-
-            if (minTimeLeftFrame) {
-                minTimeLeftFrame.style.display = 'block';
-                minTimeLeftFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            }
-        }
-    });
 </script>
 </body>
 </html>
